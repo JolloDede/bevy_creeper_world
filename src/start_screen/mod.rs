@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::ButtonLightMaterial;
 use crate::components::button_comp;
 use crate::creeper_world::GameState;
 
@@ -26,7 +27,11 @@ impl<S: States> Plugin for StartScreenPlugin<S> {
 #[derive(Component)]
 struct StartScreenMarker;
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn setup(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut ui_material: ResMut<Assets<ButtonLightMaterial>>,
+) {
     commands.spawn((
         Node {
             width: percent(100),
@@ -41,11 +46,13 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         "Missions".to_string(),
         Color::srgb_u8(255, 0, 0),
         MissionButton,
+        &mut ui_material,
     );
     let how_to_button = button_comp(
         "How to play".to_string(),
         Color::srgb_u8(0, 255, 0),
         HowToButton,
+        &mut ui_material,
     );
 
     commands.spawn((
@@ -54,6 +61,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             top: percent(10),
             width: percent(20),
             flex_direction: FlexDirection::Column,
+            row_gap: px(8),
             ..default()
         },
         StartScreenMarker,
