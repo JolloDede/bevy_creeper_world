@@ -1,4 +1,7 @@
-use bevy::prelude::*;
+use bevy::{
+    color::palettes::tailwind::{GREEN_400, RED_800},
+    prelude::*,
+};
 use strum::{Display, EnumIter, EnumString};
 
 use crate::creeper_world::GameState;
@@ -47,16 +50,18 @@ pub enum BuildingType {
 
 impl BuildingType {
     pub fn get_button_color(b_type: &BuildingType) -> Color {
+        let green = Color::srgb_u8(0, 128, 0);
+        let red = Color::srgb_u8(128, 0, 0);
         match b_type {
-            BuildingType::Collector => Color::srgb_u8(0, 240, 0),
-            BuildingType::Relay => Color::srgb_u8(0, 240, 0),
-            BuildingType::Storage => Color::srgb_u8(0, 240, 0),
-            BuildingType::Speed => Color::srgb_u8(0, 240, 0),
-            BuildingType::Reactor => Color::srgb_u8(0, 240, 0),
-            BuildingType::Blaster => Color::srgb_u8(240, 0, 0),
-            BuildingType::Mortar => Color::srgb_u8(240, 0, 0),
-            BuildingType::SAM => Color::srgb_u8(240, 0, 0),
-            BuildingType::Drone => Color::srgb_u8(240, 0, 0),
+            BuildingType::Collector => Color::from(green),
+            BuildingType::Relay => Color::from(green),
+            BuildingType::Storage => Color::from(green),
+            BuildingType::Speed => Color::from(green),
+            BuildingType::Reactor => Color::from(green),
+            BuildingType::Blaster => Color::from(red),
+            BuildingType::Mortar => Color::from(red),
+            BuildingType::SAM => Color::from(red),
+            BuildingType::Drone => Color::from(red),
         }
     }
 }
