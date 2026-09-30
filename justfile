@@ -1,7 +1,7 @@
 
 run:
-    RUST_LOG=error,bevy_age_of_war=debug cargo run
+    RUST_LOG=error,bevy_creeper_world=debug cargo run
 
 bundle:
     cargo build --release
-    zip -r release.zip assets target/release/bevy_age_of_war
+    zip -r release.zip assets target/release/bevy_creeper_world

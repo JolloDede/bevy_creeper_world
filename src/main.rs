@@ -1,8 +1,6 @@
 use bevy::{
     log::{Level, LogPlugin},
     prelude::*,
-    render::render_resource::AsBindGroup,
-    shader::ShaderRef,
 };
 
 mod creeper_world;

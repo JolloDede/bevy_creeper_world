@@ -21,6 +21,7 @@ impl PluginGroup for CreeperWorldPlugins {
 pub enum GameState {
     #[default]
     Start,
+    SelectLevel,
     InGame,
     GameOver,
 }

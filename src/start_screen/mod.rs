@@ -17,7 +17,10 @@ impl<S: States> StartScreenPlugin<S> {
 impl<S: States> Plugin for StartScreenPlugin<S> {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::Start), setup);
-        app.add_systems(Update, button_system);
+        app.add_systems(
+            Update,
+            (button_system).run_if(in_state(self._state.clone())),
+        );
         app.add_systems(OnExit(GameState::Start), cleanup_menu);
 
         app.init_state::<GameState>();
@@ -46,12 +49,14 @@ fn setup(
         "Missions".to_string(),
         Color::srgb_u8(255, 0, 0),
         MissionButton,
+        StartMenuButtons,
         &mut ui_material,
     );
     let how_to_button = button_comp(
         "How to play".to_string(),
         Color::srgb_u8(0, 255, 0),
         HowToButton,
+        StartMenuButtons,
         &mut ui_material,
     );
 
@@ -82,7 +87,7 @@ fn button_system(
         match interaction {
             Interaction::Pressed => {
                 if let Ok(_) = mission_query.get(entity) {
-                    game_state.set(GameState::InGame);
+                    game_state.set(GameState::SelectLevel);
                 }
             }
             Interaction::Hovered => {}

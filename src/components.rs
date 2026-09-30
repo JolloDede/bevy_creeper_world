@@ -6,6 +6,7 @@ pub fn button_comp(
     text: String,
     color: Color,
     marker: impl Component,
+    group: impl Component,
     ui_material: &mut ResMut<Assets<ButtonLightMaterial>>,
 ) -> impl Bundle {
     (
@@ -17,6 +18,7 @@ pub fn button_comp(
         },
         BackgroundColor(color),
         marker,
+        group,
         MaterialNode(ui_material.add(ButtonLightMaterial::new(color))),
         BoxShadow(vec![ShadowStyle {
             color: Color::BLACK.with_alpha(0.8),
@@ -25,6 +27,7 @@ pub fn button_comp(
             spread_radius: px(15),
             blur_radius: px(19),
         }]),
+        Button,
         children![Text::new(text),],
     )
 }
