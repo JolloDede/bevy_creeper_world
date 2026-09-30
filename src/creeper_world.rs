@@ -19,9 +19,9 @@ impl PluginGroup for CreeperWorldPlugins {
 
 #[derive(States, Default, Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub enum GameState {
-    #[default]
     Start,
     SelectLevel,
+    #[default]
     InGame,
     GameOver,
 }

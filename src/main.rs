@@ -7,6 +7,7 @@ mod creeper_world;
 use creeper_world::*;
 
 mod components;
+mod consts;
 mod game;
 mod start_screen;
 
