@@ -5,7 +5,7 @@ use crate::{
     components::button_comp,
     consts::HUD_MENU_HEIGTH_PERCENT,
     creeper_world::ButtonLightMaterial,
-    game::{BuildingComp, BuildingType},
+    game::{BuildingComp, BuildingType, MissionTimerMarker},
 };
 
 pub fn setup_hud(mut commands: Commands, mut ui_material: ResMut<Assets<ButtonLightMaterial>>) {
@@ -45,7 +45,32 @@ pub fn setup_hud(mut commands: Commands, mut ui_material: ResMut<Assets<ButtonLi
             ..default()
         },))
         .id();
+
+    let mission_time_parent = commands
+        .spawn((
+            Node {
+                flex_direction: FlexDirection::Column,
+                padding: UiRect::axes(px(8), px(4)),
+                border: UiRect::all(px(1)),
+                ..default()
+            },
+            BackgroundColor(Color::srgb_u8(0, 0, 120)),
+            BorderColor::all(Color::srgb_u8(240, 240, 240)),
+        ))
+        .id();
+    let mission_time_container = commands
+        .spawn(
+            (Node {
+                flex_direction: FlexDirection::Column,
+                ..default()
+            }),
+        )
+        .id();
     commands.entity(parent).add_child(turret_button_parent);
+    commands.entity(parent).add_child(mission_time_container);
+    commands
+        .entity(mission_time_container)
+        .add_child(mission_time_parent);
     commands.entity(parent).add_child(menu_button_parent);
 
     create_turret_buttons(&mut commands, turret_button_parent, &mut ui_material);
@@ -53,6 +78,7 @@ pub fn setup_hud(mut commands: Commands, mut ui_material: ResMut<Assets<ButtonLi
     // upgrades
     // elevation
     // mission time
+    create_misson_time(&mut commands, mission_time_parent);
     // status line
     // sound buttons
     create_menu_buttons(&mut commands, menu_button_parent, &mut ui_material);
@@ -119,4 +145,28 @@ fn create_menu_buttons(
             ui_material,
         ));
     });
+}
+
+fn create_misson_time(commands: &mut Commands, parent: Entity) {
+    let mt_text = commands
+        .spawn((Text::new("Mission Time"), TextColor(Color::WHITE)))
+        .id();
+
+    let mtm_parent = commands
+        .spawn((Node {
+            margin: UiRect::horizontal(Val::Auto),
+            ..default()
+        },))
+        .id();
+    let mtm_text = commands
+        .spawn((
+            Text::new("0:00"),
+            TextColor(Color::srgb_u8(240, 0, 0)),
+            MissionTimerMarker,
+        ))
+        .id();
+
+    commands.entity(parent).add_child(mt_text);
+    commands.entity(parent).add_child(mtm_parent);
+    commands.entity(mtm_parent).add_child(mtm_text);
 }
