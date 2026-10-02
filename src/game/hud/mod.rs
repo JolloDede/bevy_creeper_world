@@ -5,7 +5,10 @@ use crate::{
     components::button_comp,
     consts::HUD_MENU_HEIGTH_PERCENT,
     creeper_world::ButtonLightMaterial,
-    game::{BuildingComp, BuildingType, MissionTimerMarker},
+    game::{
+        BuildingComp, BuildingType, MissionTimerMarker,
+        resource::{CurrentEnergy, MaxEnergy},
+    },
 };
 
 pub fn setup_hud(mut commands: Commands, mut ui_material: ResMut<Assets<ButtonLightMaterial>>) {
@@ -248,24 +251,6 @@ fn status_bg_bundle(
             (
                 Node {
                     position_type: PositionType::Absolute,
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
-                    width: percent(100),
-                    height: percent(100),
-                    ..default()
-                },
-                children![(
-                    Text::new("0/60"),
-                    TextFont {
-                        font_size: font_size,
-                        ..default()
-                    },
-                    text_marker,
-                )],
-            ),
-            (
-                Node {
-                    position_type: PositionType::Absolute,
                     width: percent(25),
                     left: px(0),
                     top: px(0),
@@ -274,7 +259,28 @@ fn status_bg_bundle(
                 },
                 BackgroundColor(pb_color),
                 pb_marker,
-            )
+                StatusPb,
+            ),
+            (
+                Node {
+                    position_type: PositionType::Absolute,
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::Center,
+                    width: percent(100),
+                    height: percent(100),
+                    ..default()
+                },
+                children![(
+                    Text::new(""),
+                    TextFont {
+                        font_size: font_size,
+                        ..default()
+                    },
+                    text_marker,
+                    StatusLineText,
+                    ZIndex(10),
+                )],
+            ),
         ],
     )
 }
@@ -290,21 +296,45 @@ fn status_text(text: &str) -> impl Bundle {
 }
 
 #[derive(Component)]
-struct EnergyTextMarkerComponent;
+pub struct EnergyTextMarkerComponent;
 #[derive(Component)]
-struct EnergyPgMarkerComponent;
+pub struct EnergyPgMarkerComponent;
 
 #[derive(Component)]
-struct CollectionTextMarkerComponent;
+pub struct CollectionTextMarkerComponent;
 #[derive(Component)]
-struct CollectionPgMarkerComponent;
+pub struct CollectionPgMarkerComponent;
 
 #[derive(Component)]
-struct DepletionTextMarkerComponent;
+pub struct DepletionTextMarkerComponent;
 #[derive(Component)]
-struct DepletionPgMarkerComponent;
+pub struct DepletionPgMarkerComponent;
 
 #[derive(Component)]
-struct SaturationTextMarkerComponent;
+pub struct SaturationTextMarkerComponent;
 #[derive(Component)]
-struct SaturationPgMarkerComponent;
+pub struct SaturationPgMarkerComponent;
+
+#[derive(Component)]
+pub struct StatusLineText;
+
+#[derive(Component)]
+pub struct StatusPb;
+
+pub fn status_lines_system(
+    mut status_line_query: Query<&mut Text, With<StatusLineText>>,
+    mut pb_query: Query<&mut Node, With<StatusPb>>,
+    enery_text_marker: Single<Entity, With<EnergyTextMarkerComponent>>,
+    enery_pb_marker: Single<Entity, With<EnergyPgMarkerComponent>>,
+    max_energy: Res<MaxEnergy>,
+    current_energy: Res<CurrentEnergy>,
+) {
+    let etm_entity = enery_text_marker.into_inner();
+    if let Ok(mut text) = status_line_query.get_mut(etm_entity) {
+        text.0 = format!("{}/{}", current_energy.0, max_energy.0);
+    }
+    let epm_entity = enery_pb_marker.into_inner();
+    if let Ok(mut node) = pb_query.get_mut(epm_entity) {
+        node.width = percent((current_energy.0 as f32 / max_energy.0 as f32) * 100.);
+    }
+}

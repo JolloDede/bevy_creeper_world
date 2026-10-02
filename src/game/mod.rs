@@ -5,7 +5,10 @@ use bevy::{
 };
 use strum::{Display, EnumIter, EnumString};
 
-use crate::creeper_world::GameState;
+use crate::{
+    creeper_world::GameState,
+    game::resource::{CurrentEnergy, MaxEnergy},
+};
 
 mod hud;
 use hud::*;
@@ -27,11 +30,13 @@ impl<S: States> Plugin for GamePlugin<S> {
         app.add_systems(OnEnter(GameState::InGame), setup_hud);
         app.add_systems(
             Update,
-            (mission_time_system).run_if(in_state(self._state.clone())),
+            (mission_time_system, status_lines_system).run_if(in_state(self._state.clone())),
         );
         // app.add_systems(OnExit(GameState::Start), cleanup_menu);
 
         app.insert_resource(MissionTimer(Stopwatch::new()));
+        app.insert_resource(CurrentEnergy(60));
+        app.insert_resource(MaxEnergy(60));
     }
 }
 
