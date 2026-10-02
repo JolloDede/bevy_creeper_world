@@ -9,6 +9,7 @@ use crate::creeper_world::GameState;
 
 mod hud;
 use hud::*;
+mod resource;
 
 pub struct GamePlugin<S: States> {
     _state: S,
